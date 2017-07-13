@@ -109,7 +109,7 @@ func handlePacket(p *mc.Packet, w *mc.Writer, c net.Conn) error {
 			log.Println("State play not implemented")
 
 		default:
-			return fmt.Errorf("Connection", c.RemoteAddr(), "in invalid state", State[c])
+			return fmt.Errorf("Connection %v in invalid state %v", c.RemoteAddr(), State[c])
 	}
 
 	return nil
