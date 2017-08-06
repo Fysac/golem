@@ -14,8 +14,8 @@ import (
 var State = map[net.Conn]int{}
 var StateLock = sync.Mutex{}
 
-func handleConn(c net.Conn){
-	defer func(){
+func handleConn(c net.Conn) {
+	defer func() {
 		c.Close()
 
 		StateLock.Lock()
@@ -49,67 +49,67 @@ func handleConn(c net.Conn){
 
 func handlePacket(p *mc.Packet, w *mc.Writer, c net.Conn) error {
 	switch State[c] {
-		case mc.StateHandshake:
-			if p.Id == mc.PacketHandshakeId {
-				version, addr, port, state, err := mc.DecodePacketHandshake(p)
-				if err != nil {
-					return err
-				}
-
-				StateLock.Lock()
-				State[c] = state
-				StateLock.Unlock()
-
-				log.Println("Handshake:", version, addr, port, state)
-			}
-		
-		case mc.StateStatus:
-			if p.Id == mc.PacketStatusRequestId {
-				log.Println("Request")
-
-				p, err := mc.NewPacketResponse(&Status)
-				if err != nil {
-					return err
-				}
-
-				return w.WritePacket(p)
-
-			} else if p.Id == mc.PacketPingId {
-				ping, err := mc.DecodePacketPing(p)
-				if err != nil {
-					return err
-				}
-
-				p, err := mc.NewPacketPing(ping)
-				if err != nil {
-					return err
-				}
-
-				return w.WritePacket(p)
+	case mc.StateHandshake:
+		if p.Id == mc.PacketHandshakeId {
+			version, addr, port, state, err := mc.DecodePacketHandshake(p)
+			if err != nil {
+				return err
 			}
 
-		case mc.StateLogin:
-			if p.Id == mc.PacketLoginStartId {
-				username, err := mc.DecodePacketLoginStart(p)
-				if err != nil {
-					return err
-				}
+			StateLock.Lock()
+			State[c] = state
+			StateLock.Unlock()
 
-				log.Println("Login start:", username)
-				
-				p, err := mc.NewPacketDisconnectLogin("Not implemented, " + username + "!")
-				if err != nil {
-					return err
-				}
+			log.Println("Handshake:", version, addr, port, state)
+		}
 
-				return w.WritePacket(p)
+	case mc.StateStatus:
+		if p.Id == mc.PacketStatusRequestId {
+			log.Println("Request")
+
+			p, err := mc.NewPacketResponse(&Status)
+			if err != nil {
+				return err
 			}
 
-		case mc.StatePlay:
-			log.Println("State play not implemented")
+			return w.WritePacket(p)
 
-		default:
-			return fmt.Errorf("Connection %v in invalid state %v", c.RemoteAddr(), State[c])
+		} else if p.Id == mc.PacketPingId {
+			ping, err := mc.DecodePacketPing(p)
+			if err != nil {
+				return err
+			}
+
+			p, err := mc.NewPacketPing(ping)
+			if err != nil {
+				return err
+			}
+
+			return w.WritePacket(p)
+		}
+
+	case mc.StateLogin:
+		if p.Id == mc.PacketLoginStartId {
+			username, err := mc.DecodePacketLoginStart(p)
+			if err != nil {
+				return err
+			}
+
+			log.Println("Login start:", username)
+
+			p, err := mc.NewPacketDisconnectLogin("Not implemented, " + username + "!")
+			if err != nil {
+				return err
+			}
+
+			return w.WritePacket(p)
+		}
+
+	case mc.StatePlay:
+		log.Println("State play not implemented")
+
+	default:
+		return fmt.Errorf("Connection %v in invalid state %v", c.RemoteAddr(), State[c])
 	}
 
 	return nil

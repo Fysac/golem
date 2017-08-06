@@ -9,13 +9,13 @@ import (
 	"github.com/fysac/golem/mc"
 )
 
-const ( 
+const (
 	ListenPort = "25565"
 )
 
 var Status mc.ServerStatus
 
-func initConfig(){
+func initConfig() {
 	bs, err := ioutil.ReadFile("config.json")
 	if err != nil {
 		log.Fatal(err)
@@ -27,8 +27,8 @@ func initConfig(){
 	}
 }
 
-func main(){
-	listen, err := net.Listen("tcp", ":" + ListenPort)
+func main() {
+	listen, err := net.Listen("tcp", ":"+ListenPort)
 	if err != nil {
 		log.Fatal(err)
 	}

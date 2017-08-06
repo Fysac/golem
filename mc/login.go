@@ -5,7 +5,7 @@ import (
 	"bytes"
 )
 
-func DecodePacketLoginStart(p *Packet) (string, error){
+func DecodePacketLoginStart(p *Packet) (string, error) {
 	r := Reader{bufio.NewReader(bytes.NewReader(p.Data))}
 
 	username, err := r.ReadVarstring()
@@ -16,7 +16,7 @@ func DecodePacketLoginStart(p *Packet) (string, error){
 	return username, nil
 }
 
-func NewPacketDisconnectLogin(reason string) (*Packet, error){
+func NewPacketDisconnectLogin(reason string) (*Packet, error) {
 	p := Packet{Id: 0x00}
 	buf := new(bytes.Buffer)
 	w := Writer{bufio.NewWriter(buf)}
@@ -32,7 +32,7 @@ func NewPacketDisconnectLogin(reason string) (*Packet, error){
 	return &p, nil
 }
 
-func NewPacketLoginSuccess(username string, uuid string) (*Packet, error){
+func NewPacketLoginSuccess(username string, uuid string) (*Packet, error) {
 	p := Packet{Id: 0x02}
 	buf := new(bytes.Buffer)
 	w := Writer{bufio.NewWriter(buf)}

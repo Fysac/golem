@@ -8,9 +8,9 @@ import (
 )
 
 const (
-	MaxVarintSize = 5
-	MaxPacketSize = 32767 * 4 + 3
-	MaxStringLength = 32767 * 4 + 3
+	MaxVarintSize   = 5
+	MaxPacketSize   = 32767*4 + 3
+	MaxStringLength = 32767*4 + 3
 )
 
 type Reader struct {
@@ -39,7 +39,7 @@ func (r *Reader) ReadPacket() (*Packet, error) {
 		return nil, fmt.Errorf("Invalid id: 0x%02x", id)
 	}
 
-	data := make([]byte, len - 1)
+	data := make([]byte, len-1)
 
 	_, err = r.Read(data)
 	if err != nil {
@@ -52,7 +52,7 @@ func (r *Reader) ReadPacket() (*Packet, error) {
 }
 
 /* Read a long */
-func (r *Reader) ReadInt64() (int64, error){
+func (r *Reader) ReadInt64() (int64, error) {
 	const size = 8
 	var res int64 = 0
 
@@ -63,15 +63,15 @@ func (r *Reader) ReadInt64() (int64, error){
 		return 0, err
 	}
 
-	for i := range(bs) {
-		res |= int64(bs[i]) << uint(8 * (len(bs) - i - 1))
+	for i := range bs {
+		res |= int64(bs[i]) << uint(8*(len(bs)-i-1))
 	}
 
 	return res, nil
 }
 
 /* Read an unsigned short */
-func (r *Reader) ReadUint16() (uint16, error){
+func (r *Reader) ReadUint16() (uint16, error) {
 	const size = 2
 	var res uint16 = 0
 
@@ -82,27 +82,27 @@ func (r *Reader) ReadUint16() (uint16, error){
 		return 0, err
 	}
 
-	for i := range(bs) {
-		res |= uint16(bs[i]) << uint(8 * (len(bs) - i - 1))
+	for i := range bs {
+		res |= uint16(bs[i]) << uint(8*(len(bs)-i-1))
 	}
 
 	return res, nil
 }
 
 /* Read a Minecraft varint */
-func (r *Reader) ReadVarint() (int, error){
+func (r *Reader) ReadVarint() (int, error) {
 	var i uint = 0
 	var b byte = 0x80
 	var err error
 	res := 0
 
-	for b & 0x80 != 0 {
+	for b&0x80 != 0 {
 		b, err = r.ReadByte()
 		if err != nil {
 			return -1, err
 		}
 
-		res |= (int(b & byte(0x7f)) << (7 * i))
+		res |= (int(b&byte(0x7f)) << (7 * i))
 		i++
 
 		if i > MaxVarintSize {
@@ -113,7 +113,7 @@ func (r *Reader) ReadVarint() (int, error){
 }
 
 /* Read a Minecraft string */
-func (r *Reader) ReadVarstring() (string, error){
+func (r *Reader) ReadVarstring() (string, error) {
 	len, err := r.ReadVarint()
 	if err != nil {
 		return "", err
@@ -139,7 +139,7 @@ type Writer struct {
 
 func (w *Writer) WritePacket(p *Packet) error {
 	p.Length = len(p.Data) + 1
-	
+
 	buf := new(bytes.Buffer)
 	bufw := Writer{bufio.NewWriter(buf)}
 
@@ -175,7 +175,7 @@ func (w *Writer) WriteInt64(value int64) error {
 	const size = 8
 	bs := make([]byte, size)
 
-	for i := range(bs) {
+	for i := range bs {
 		bs[i] = byte(value & 0xff)
 		value >>= 8
 

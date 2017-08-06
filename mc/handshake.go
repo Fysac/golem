@@ -5,7 +5,7 @@ import (
 	"bytes"
 )
 
-func DecodePacketHandshake(p *Packet) (int, string, uint16, int, error){
+func DecodePacketHandshake(p *Packet) (int, string, uint16, int, error) {
 	r := Reader{bufio.NewReader(bytes.NewReader(p.Data))}
 
 	version, err := r.ReadVarint()
