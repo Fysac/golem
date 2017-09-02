@@ -25,8 +25,8 @@ func handleConn(c net.Conn) {
 
 	log.Println("Connection from", c.RemoteAddr())
 
-	r := mc.Reader{bufio.NewReader(c)}
-	w := mc.Writer{bufio.NewWriter(c)}
+	r := mc.Reader{Reader: bufio.NewReader(c)}
+	w := mc.Writer{Writer: bufio.NewWriter(c)}
 
 	for {
 		p, err := r.ReadPacket()
