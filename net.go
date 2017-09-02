@@ -67,12 +67,12 @@ func handlePacket(p *mc.Packet, w *mc.Writer, c net.Conn) error {
 		if p.Id == mc.PacketStatusRequestId {
 			log.Println("Request")
 
-			p, err := mc.NewPacketResponse(&Status)
+			pk, err := mc.NewPacketResponse(&Status)
 			if err != nil {
 				return err
 			}
 
-			return w.WritePacket(p)
+			return w.WritePacket(pk)
 
 		} else if p.Id == mc.PacketPingId {
 			ping, err := mc.DecodePacketPing(p)
@@ -80,12 +80,12 @@ func handlePacket(p *mc.Packet, w *mc.Writer, c net.Conn) error {
 				return err
 			}
 
-			p, err := mc.NewPacketPing(ping)
+			pk, err := mc.NewPacketPing(ping)
 			if err != nil {
 				return err
 			}
 
-			return w.WritePacket(p)
+			return w.WritePacket(pk)
 		}
 
 	case mc.StateLogin:
@@ -97,12 +97,12 @@ func handlePacket(p *mc.Packet, w *mc.Writer, c net.Conn) error {
 
 			log.Println("Login start:", username)
 
-			p, err := mc.NewPacketDisconnectLogin("Not implemented, " + username + "!")
+			pk, err := mc.NewPacketDisconnectLogin("Not implemented, " + username + "!")
 			if err != nil {
 				return err
 			}
 
-			return w.WritePacket(p)
+			return w.WritePacket(pk)
 		}
 
 	case mc.StatePlay:
